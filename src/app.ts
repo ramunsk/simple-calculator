@@ -1,5 +1,6 @@
 import { Lexer } from './lexer';
 import { Parser } from './parser';
+import { AstVisualizer } from './visitor';
 
 const args = process.argv;
 
@@ -17,7 +18,8 @@ if (error) {
 
 try {
     const ast = new Parser(tokens!).parse();
-    console.log(ast);
+    const astString = new AstVisualizer(ast).visualize();
+    console.log(astString);
 } catch (error) {
     console.log(error);
     process.exit(1);

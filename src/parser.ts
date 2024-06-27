@@ -19,21 +19,14 @@ export class Parser {
         const operation = this.peek();
 
         if (operation?.type !== TokenType.Plus && operation?.type !== TokenType.Minus) {
-            console.log('oi', operation?.type);
             return leftNum;
         }
 
         this.advance();
-        const rightNum = this.number();
+        const rightNum = this.expression();
 
         const expression = new ExpressionNode(leftNum, operation, rightNum);
-
-        const next = this.peek();
-        if (next?.type === TokenType.EOF) {
-            return expression;
-        }
-        this.advance();
-        return new ExpressionNode(expression, next!, this.expression());
+        return expression;
     }
 
     private number(): NumberNode {
