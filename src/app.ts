@@ -1,6 +1,6 @@
 import { Lexer } from './lexer';
 import { Parser } from './parser';
-import { AstVisualizer } from './visitor';
+import { AstVisualizer, ExpressionEvaluator } from './visitor';
 
 const args = process.argv;
 
@@ -20,6 +20,9 @@ try {
     const ast = new Parser(tokens!).parse();
     const astString = new AstVisualizer(ast).visualize();
     console.log(astString);
+
+    const result = new ExpressionEvaluator(ast).evaluate();
+    console.log(result);
 } catch (error) {
     console.log(error);
     process.exit(1);

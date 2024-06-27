@@ -1,4 +1,5 @@
 import { ASTNode, ExpressionNode, NumberNode } from './ast';
+import { TokenType } from './token';
 
 export abstract class ASTNodeVisitor<T> {
     abstract visitExpression(node: ExpressionNode): T;
@@ -49,5 +50,38 @@ export class AstVisualizer extends ASTNodeVisitor<string> {
 
     override visitNumber(node: NumberNode): string {
         return node.value.toString();
+    }
+}
+
+export class ExpressionEvaluator extends ASTNodeVisitor<number> {
+    private node: ASTNode;
+
+    constructor(node: ASTNode) {
+        super();
+        this.node = node;
+    }
+
+    evaluate(): string {
+        let result = 'Result is: ';
+
+        if (this.node instanceof NumberNode) {
+            result += this.visitNumber(this.node);
+        } else {
+            result += this.visitExpression(this.node as ExpressionNode);
+        }
+
+        return result;
+    }
+
+    override visitExpression(node: ExpressionNode): number {
+        let left =
+            node.left instanceof NumberNode ? node.left.value : this.visitExpression(node.left as ExpressionNode);
+        let right =
+            node.right instanceof NumberNode ? node.right.value : this.visitExpression(node.right as ExpressionNode);
+
+        return node.operator.type === TokenType.Plus ? left + right : left - right;
+    }
+    override visitNumber(node: NumberNode): number {
+        return node.value;
     }
 }
