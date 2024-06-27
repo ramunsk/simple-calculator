@@ -1,4 +1,5 @@
 import { Lexer } from './lexer';
+import { Parser } from './parser';
 
 const args = process.argv;
 
@@ -14,4 +15,10 @@ if (error) {
     process.exit(1);
 }
 
-console.log(tokens);
+try {
+    const ast = new Parser(tokens!).parse();
+    console.log(ast);
+} catch (error) {
+    console.log(error);
+    process.exit(1);
+}
