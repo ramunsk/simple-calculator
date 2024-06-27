@@ -26,7 +26,14 @@ export class Parser {
         this.advance();
         const rightNum = this.number();
 
-        return new ExpressionNode(leftNum, operation, rightNum);
+        const expression = new ExpressionNode(leftNum, operation, rightNum);
+
+        const next = this.peek();
+        if (next?.type === TokenType.EOF) {
+            return expression;
+        }
+        this.advance();
+        return new ExpressionNode(expression, next!, this.expression());
     }
 
     private number(): NumberNode {
