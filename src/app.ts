@@ -1,6 +1,6 @@
 import { Lexer } from './lexer';
 import { Parser } from './parser';
-import { AstVisualizer, ExpressionEvaluator } from './visitor';
+import { AstVisualizer, ExpressionEvaluator, ExpressionFormatter } from './visitor';
 
 const args = process.argv;
 
@@ -21,6 +21,8 @@ try {
     const astString = new AstVisualizer(ast).visualize();
     console.log(astString);
 
+    const pretty = new ExpressionFormatter(ast).format();
+    console.log(pretty);
     const result = new ExpressionEvaluator(ast).evaluate();
     console.log(result);
 } catch (error) {

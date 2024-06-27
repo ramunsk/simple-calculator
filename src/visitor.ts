@@ -17,11 +17,12 @@ export class AstVisualizer extends ASTNodeVisitor<string> {
     }
 
     visualize(): string {
-        if (this.node instanceof NumberNode) {
-            return this.visitNumber(this.node);
-        }
-
-        return 'AST:\n' + this.visitExpression(this.node as ExpressionNode);
+        const result =
+            this.node instanceof NumberNode
+                ? this.visitNumber(this.node)
+                : this.visitExpression(this.node as ExpressionNode);
+        const separator = '-'.repeat(30);
+        return `${separator}\nAST:\n${result}\n${separator}`;
     }
 
     override visitExpression(node: ExpressionNode): string {
@@ -62,15 +63,11 @@ export class ExpressionEvaluator extends ASTNodeVisitor<number> {
     }
 
     evaluate(): string {
-        let result = 'Result is: ';
-
-        if (this.node instanceof NumberNode) {
-            result += this.visitNumber(this.node);
-        } else {
-            result += this.visitExpression(this.node as ExpressionNode);
-        }
-
-        return result;
+        const result =
+            this.node instanceof NumberNode
+                ? this.visitNumber(this.node)
+                : this.visitExpression(this.node as ExpressionNode);
+        return `Result is: ${result}`;
     }
 
     override visitExpression(node: ExpressionNode): number {
@@ -83,5 +80,39 @@ export class ExpressionEvaluator extends ASTNodeVisitor<number> {
     }
     override visitNumber(node: NumberNode): number {
         return node.value;
+    }
+}
+
+export class ExpressionFormatter extends ASTNodeVisitor<string> {
+    private node: ASTNode;
+
+    constructor(node: ASTNode) {
+        super();
+        this.node = node;
+    }
+
+    format(): string {
+        const result =
+            this.node instanceof NumberNode
+                ? this.visitNumber(this.node)
+                : this.visitExpression(this.node as ExpressionNode);
+        const separator = '-'.repeat(30);
+        return `${separator}\nPretty print:\n${result}\n${separator}`;
+    }
+
+    override visitExpression(node: ExpressionNode): string {
+        let left =
+            node.left instanceof NumberNode
+                ? this.visitNumber(node.left)
+                : this.visitExpression(node.left as ExpressionNode);
+        let right =
+            node.right instanceof NumberNode
+                ? this.visitNumber(node.right)
+                : this.visitExpression(node.right as ExpressionNode);
+
+        return `${left}${node.operator.value} ${right}`;
+    }
+    override visitNumber(node: NumberNode): string {
+        return `${node.value} `;
     }
 }
